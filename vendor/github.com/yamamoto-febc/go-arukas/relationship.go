@@ -26,7 +26,7 @@ type AppRelationship struct {
 // ServiceRelationship represents Services relationship data
 type ServiceRelationship struct {
 	App         *RelationshipData `json:"app,omitempty"`
-	ServicePlan *RelationshipData `json:"service_plan,omitempty"`
+	ServicePlan *RelationshipData `json:"service-plan,omitempty"`
 }
 
 // NewAppRelationship creates new AppRelationship with default values

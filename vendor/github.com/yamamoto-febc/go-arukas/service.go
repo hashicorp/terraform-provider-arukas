@@ -101,7 +101,7 @@ func (s *Service) PlanID() string {
 
 // ServiceAttr represents service.attributes object
 type ServiceAttr struct {
-	AppID                    string           `json:"app_id,omitempty"`
+	AppID                    string           `json:"app-id,omitempty"`
 	Image                    string           `json:"image"`
 	Command                  string           `json:"command"`
 	Instances                int32            `json:"instances"`
@@ -115,9 +115,9 @@ type ServiceAttr struct {
 	Status                   string           `json:"status,omitempty"`
 	SubDomain                string           `json:"subdomain,omitempty"`
 	EndPoint                 string           `json:"endpoint,omitempty"`
-	CustomDomains            []*CustomDomain  `json:"custom_domains,omitempty"`
-	LastInstanceFailedAt     *time.Time       `json:"last_instance_failed_at,omitempty"`
-	LastInstanceFailedStatus string           `json:"last_instance_failed_status,omitempty"`
+	CustomDomains            []*CustomDomain  `json:"custom-domains,omitempty"`
+	LastInstanceFailedAt     *time.Time       `json:"last-instance-failed-at,omitempty"`
+	LastInstanceFailedStatus string           `json:"last-instance-failed-status,omitempty"`
 }
 
 // ServiceData represents service data

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	API "github.com/arukasio/cli"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/yamamoto-febc/go-arukas"
 )
 
 func resourceArukasContainer() *schema.Resource {
@@ -18,46 +18,52 @@ func resourceArukasContainer() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
 		},
+		SchemaVersion: 1,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"image": &schema.Schema{
+			"image": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"instances": &schema.Schema{
+			"instances": {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      1,
 				ValidateFunc: validateIntegerInRange(1, 10),
 			},
-			"memory": &schema.Schema{
-				Type:         schema.TypeInt,
-				Optional:     true,
-				Default:      256,
-				ValidateFunc: validateIntInWord([]string{"256", "512"}),
+			"memory": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Removed:  "Use `plan` instead. This attribute will be removed in a future version",
 			},
-			"endpoint": &schema.Schema{
+			"plan": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Default:      arukas.PlanFree,
+				ValidateFunc: validateStringInWord(arukas.ValidPlans),
+			},
+			"endpoint": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 			},
-			"ports": &schema.Schema{
+			"ports": {
 				Type:     schema.TypeList,
 				Required: true,
 				MaxItems: 20,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"protocol": &schema.Schema{
+						"protocol": {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Default:      "tcp",
 							ValidateFunc: validateStringInWord([]string{"tcp", "udp"}),
 						},
-						"number": &schema.Schema{
+						"number": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      "80",
@@ -66,60 +72,65 @@ func resourceArukasContainer() *schema.Resource {
 					},
 				},
 			},
-			"environments": &schema.Schema{
+			"environments": {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 20,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"key": &schema.Schema{
+						"key": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"value": &schema.Schema{
+						"value": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 					},
 				},
 			},
-			"cmd": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
+			"cmd": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateStrInRange(1, 4096),
 			},
-			"port_mappings": &schema.Schema{
+			"port_mappings": {
 				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"host": &schema.Schema{
+						"host": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"ipaddress": &schema.Schema{
+						"ipaddress": {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"container_port": &schema.Schema{
+						"container_port": {
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
-						"service_port": &schema.Schema{
+						"service_port": {
 							Type:     schema.TypeInt,
 							Computed: true,
 						},
 					},
 				},
 			},
-			"endpoint_full_hostname": &schema.Schema{
+			"endpoint_full_hostname": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"endpoint_full_url": &schema.Schema{
+			"endpoint_full_url": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"app_id": &schema.Schema{
+			"service_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"region": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -128,65 +139,65 @@ func resourceArukasContainer() *schema.Resource {
 }
 
 func resourceArukasContainerCreate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*ArukasClient)
+	client := meta.(*arukasClient)
 
-	var appSet API.AppSet
+	name := d.Get("name").(string)
+	image := d.Get("image").(string)
+	instances := d.Get("instances").(int)
+	cmd := d.Get("cmd").(string)
+	subdomain := d.Get("endpoint").(string)
 
-	// create an app
-	newApp := API.App{Name: d.Get("name").(string)}
+	plan := d.Get("plan").(string)
+	if plan == "" {
+		plan = arukas.PlanFree
+	}
 
-	var parsedEnvs API.Envs
-	var parsedPorts API.Ports
-
+	var parsedEnvs []*arukas.Env
 	if rawEnvs, ok := d.GetOk("environments"); ok {
 		parsedEnvs = expandEnvs(rawEnvs)
 	}
+
+	var parsedPorts []*arukas.Port
 	if rawPorts, ok := d.GetOk("ports"); ok {
 		parsedPorts = expandPorts(rawPorts)
 	}
 
-	newContainer := API.Container{
-		Envs:      parsedEnvs,
-		Ports:     parsedPorts,
-		ImageName: d.Get("image").(string),
-		Mem:       d.Get("memory").(int),
-		Instances: d.Get("instances").(int),
-		Cmd:       d.Get("cmd").(string),
-
-		Name: d.Get("endpoint").(string),
-	}
-	newAppSet := API.AppSet{
-		App:       newApp,
-		Container: newContainer,
-	}
-
 	// create
-	if err := client.Post(&appSet, "/app-sets", newAppSet); err != nil {
+	app, err := client.CreateApp(&arukas.RequestParam{
+		Name:        name,
+		Plan:        plan,
+		Image:       image,
+		Instances:   int32(instances),
+		Command:     cmd,
+		SubDomain:   subdomain,
+		Environment: parsedEnvs,
+		Ports:       parsedPorts,
+	})
+	if err != nil {
 		return err
 	}
+
+	d.SetId(app.AppID())
 
 	// start container
-	if err := client.Post(nil, fmt.Sprintf("/containers/%s/power", appSet.Container.ID), nil); err != nil {
+	if err := client.PowerOn(app.ServiceID()); err != nil {
 		return err
 	}
 
-	d.SetId(appSet.Container.ID)
-
 	stateConf := &resource.StateChangeConf{
-		Target:  []string{"running"},
-		Pending: []string{"stopped", "booting"},
-		Timeout: client.Timeout,
+		Target:  []string{arukas.StatusRunning},
+		Pending: []string{arukas.StatusStopping, arukas.StatusStopped, arukas.StatusBooting},
+		Timeout: client.timeout,
 		Refresh: func() (interface{}, string, error) {
-			var container API.Container
-			err := client.Get(&container, fmt.Sprintf("/containers/%s", appSet.Container.ID))
+			service, err := client.ReadService(app.ServiceID())
 			if err != nil {
 				return nil, "", err
 			}
 
-			return container, container.StatusText, nil
+			return service, service.Status(), nil
 		},
 	}
-	_, err := stateConf.WaitForState()
+	_, err = stateConf.WaitForState()
 	if err != nil {
 		return err
 	}
@@ -195,77 +206,112 @@ func resourceArukasContainerCreate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceArukasContainerRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*ArukasClient)
+	client := meta.(*arukasClient)
 
-	var container API.Container
-	var app API.App
-
-	if err := client.Get(&container, fmt.Sprintf("/containers/%s", d.Id())); err != nil {
+	app, err := client.ReadApp(d.Id())
+	if err != nil {
+		if _, ok := err.(arukas.ErrorNotFound); ok {
+			d.SetId("")
+			return nil
+		}
 		return err
 	}
-	if err := client.Get(&app, fmt.Sprintf("/apps/%s", container.AppID)); err != nil {
+	service, err := client.ReadService(app.ServiceID())
+	if err != nil {
 		return err
 	}
 
-	d.Set("app_id", container.AppID)
-	d.Set("name", app.Name)
-	d.Set("image", container.ImageName)
-	d.Set("instances", container.Instances)
-	d.Set("memory", container.Mem)
-	endpoint := container.Endpoint
+	d.Set("name", app.Name())
+	d.Set("image", service.Image())
+	d.Set("instances", service.Instances())
+	d.Set("cmd", service.Command())
+	d.Set("ports", flattenPorts(service.Ports()))
+	d.Set("port_mappings", flattenPortMappings(service.PortMapping()))
+	d.Set("environments", flattenEnvs(service.Environment()))
+
+	var region string
+	var plan string
+	plans := strings.Split(service.PlanID(), "/")
+	if len(plans) == 2 {
+		region = plans[0]
+		plan = plans[1]
+	}
+	d.Set("region", region)
+	d.Set("plan", plan)
+
+	endpoint := service.EndPoint()
 	if strings.HasSuffix(endpoint, ".arukascloud.io") {
 		endpoint = strings.Replace(endpoint, ".arukascloud.io", "", -1)
 	}
-
 	d.Set("endpoint", endpoint)
-	d.Set("endpoint_full_hostname", container.Endpoint)
-	d.Set("endpoint_full_url", fmt.Sprintf("https://%s", container.Endpoint))
+	d.Set("endpoint_full_hostname", endpoint)
+	d.Set("endpoint_full_url", fmt.Sprintf("https://%s", endpoint))
 
-	d.Set("cmd", container.Cmd)
-
-	//ports
-	d.Set("ports", flattenPorts(container.Ports))
-
-	//port mappings
-	d.Set("port_mappings", flattenPortMappings(container.PortMappings))
-
-	//envs
-	d.Set("environments", flattenEnvs(container.Envs))
-
+	d.Set("service_id", app.ServiceID())
 	return nil
 }
 
 func resourceArukasContainerUpdate(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*arukasClient)
 
-	client := meta.(*ArukasClient)
-	var container API.Container
-
-	if err := client.Get(&container, fmt.Sprintf("/containers/%s", d.Id())); err != nil {
+	app, err := client.ReadApp(d.Id())
+	if err != nil {
+		if _, ok := err.(arukas.ErrorNotFound); ok {
+			d.SetId("")
+			return nil
+		}
 		return err
 	}
+	serviceID := app.ServiceID()
 
-	var parsedEnvs API.Envs
-	var parsedPorts API.Ports
+	image := d.Get("image").(string)
+	instances := d.Get("instances").(int)
+	cmd := d.Get("cmd").(string)
+	subdomain := d.Get("endpoint").(string)
 
+	plan := d.Get("plan").(string)
+	if plan == "" {
+		plan = arukas.PlanFree
+	}
+
+	var parsedEnvs []*arukas.Env
 	if rawEnvs, ok := d.GetOk("environments"); ok {
 		parsedEnvs = expandEnvs(rawEnvs)
 	}
+
+	var parsedPorts []*arukas.Port
 	if rawPorts, ok := d.GetOk("ports"); ok {
 		parsedPorts = expandPorts(rawPorts)
 	}
 
-	newContainer := API.Container{
-		Envs:      parsedEnvs,
-		Ports:     parsedPorts,
-		ImageName: d.Get("image").(string),
-		Mem:       d.Get("memory").(int),
-		Instances: d.Get("instances").(int),
-		Cmd:       d.Get("cmd").(string),
-		Name:      d.Get("endpoint").(string),
+	_, err = client.UpdateService(serviceID, &arukas.RequestParam{
+		Plan:        plan,
+		Image:       image,
+		Instances:   int32(instances),
+		Command:     cmd,
+		SubDomain:   subdomain,
+		Environment: parsedEnvs,
+		Ports:       parsedPorts,
+	})
+	if err != nil {
+		return err
 	}
 
-	// update
-	if err := client.Patch(nil, fmt.Sprintf("/containers/%s", d.Id()), newContainer); err != nil {
+	stateConf := &resource.StateChangeConf{
+		Target:  []string{arukas.StatusRunning},
+		Pending: []string{arukas.StatusRebooting, arukas.StatusBooting},
+		Timeout: client.timeout,
+		Refresh: func() (interface{}, string, error) {
+			service, err := client.ReadService(serviceID)
+			if err != nil {
+				return nil, "", err
+			}
+
+			return service, service.Status(), nil
+		},
+	}
+	_, err = stateConf.WaitForState()
+	if err != nil {
 		return err
 	}
 
@@ -274,16 +320,21 @@ func resourceArukasContainerUpdate(d *schema.ResourceData, meta interface{}) err
 }
 
 func resourceArukasContainerDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*ArukasClient)
-	var container API.Container
+	client := meta.(*arukasClient)
 
-	if err := client.Get(&container, fmt.Sprintf("/containers/%s", d.Id())); err != nil {
+	_, err := client.ReadApp(d.Id())
+	if err != nil {
+		if _, ok := err.(arukas.ErrorNotFound); ok {
+			d.SetId("")
+			return nil
+		}
 		return err
 	}
 
-	if err := client.Delete(fmt.Sprintf("/apps/%s", container.AppID)); err != nil {
-		return err
+	if err := client.DeleteApp(d.Id()); err != nil {
+		return nil
 	}
 
+	d.SetId("")
 	return nil
 }
