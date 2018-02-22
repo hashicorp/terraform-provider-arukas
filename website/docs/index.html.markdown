@@ -8,11 +8,6 @@ description: |-
 
 # Arukas Provider
 
-!> **NOTE:** Arukas' beta service will end on **July 31, 2017**.
-    After that, official service will be started (however, the release date is undecided).
-    We plan to upgrade this provider after official service starts.
-    Until that time, this provider will not be maintained.
-
 The Arukas provider is used to manage [Arukas](https://arukas.io/en/) resources.
 
 Use the navigation to the left to read about the available resources.
@@ -25,7 +20,7 @@ Here is an example that will setup the following:
 
 + A container resource using the "NGINX" image
 + Instance count is 1
-+ Memory size is 256Mbyte
++ Plan is "free"
 + Expose tcp 80 port to the EndPoint
 + Set environments variable with like "key1=value1"
 
@@ -41,7 +36,7 @@ resource "arukas_container" "foobar" {
   name      = "terraform_for_arukas_test_foobar"
   image     = "nginx:latest"
   instances = 1
-  memory    = 256
+  plan      = "free"
 
   ports = {
     protocol = "tcp"

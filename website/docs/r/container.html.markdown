@@ -10,7 +10,7 @@ description: |-
 
 Provides container resource. This allows container to be created, updated and deleted.
 
-For additional details please refer to [API documentation](https://arukas.io/en/documents-en/arukas-api-reference-en/#containers).
+For additional details please refer to [API documentation](https://arukas.io/en/documents-en/arukas-api-reference-en/).
 
 ## Example Usage
 
@@ -21,7 +21,7 @@ resource "arukas_container" "foobar" {
   name      = "terraform_for_arukas_test_foobar"
   image     = "nginx:latest"
   instances = 1
-  memory    = 256
+  plan      = "free"
 
   ports = {
     protocol = "tcp"
@@ -42,7 +42,7 @@ The following arguments are supported:
 * `name` - (Required, string) The name of the container.
 * `image` - (Required, string) The ID of the image to back this container.It must be a public image on DockerHub.
 * `instances` - (Optional, int) The count of the instance. It must be between `1` and `10`.
-* `memory` - (Optional, int) The size of the instance RAM.It must be `256` or `512`.
+* `plan` - (Optional, string) The plan of the Arukas. It must be `free` or `hobby` or `standard-1` or `standard-2`.
 * `endpoint` - (Optional,string) The subdomain part of the endpoint assigned by Arukas. If it is not set, Arukas will do automatic assignment.
 * `ports` - (Required , block) See [Ports](#ports) below for details.
 * `environments` - (Required , block) See [Environments](#environments) below for details.
@@ -73,12 +73,13 @@ the following:
 
 The following attributes are exported:
 
-* `id` - The ID of the container.
-* `app_id` - The ID of the Arukas application to which the container belongs.
+* `id` - The ID of the Arukas application to which the Arukas Service and the container belongs.
+* `service_id` - The ID of the Arukas Service to which the container belongs.
 * `name` - The name of the container.
 * `image` - The ID of the image to back this container.
 * `instances` - The count of the instance.
-* `memory` - The size of the instance RAM.
+* `region` - The name of region
+* `plan` - The name of plan
 * `endpoint` - The subdomain part of the endpoint assigned by Arukas.
 * `ports` - See [Ports](#ports) below for details.
 * `environments` - See [Environments](#environments) below for details.
