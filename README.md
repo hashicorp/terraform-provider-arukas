@@ -1,14 +1,6 @@
 Terraform Arukas Provider
 ==================
 
-### :exclamation: Unmaintained :exclamation:
-
-This provider is not currently maintained or tested due to the fact that Arukas ends the beta offering on 31st July 2017 and they have not announced future offerings yet.
-
-https://arukas.io/en/updates-en/notice_concerning_termination_of_beta_service-en/
-
--------
-
 - Website: https://www.terraform.io
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
