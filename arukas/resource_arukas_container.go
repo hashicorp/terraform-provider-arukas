@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/yamamoto-febc/go-arukas"
 )
 
@@ -33,7 +34,7 @@ func resourceArukasContainer() *schema.Resource {
 				Type:         schema.TypeInt,
 				Optional:     true,
 				Default:      1,
-				ValidateFunc: validateIntegerInRange(1, 10),
+				ValidateFunc: validation.IntBetween(1, 10),
 			},
 			"memory": {
 				Type:     schema.TypeInt,
@@ -44,7 +45,7 @@ func resourceArukasContainer() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Default:      arukas.PlanFree,
-				ValidateFunc: validateStringInWord(arukas.ValidPlans),
+				ValidateFunc: validation.StringInSlice(arukas.ValidPlans, false),
 			},
 			"endpoint": {
 				Type:     schema.TypeString,
@@ -61,13 +62,13 @@ func resourceArukasContainer() *schema.Resource {
 							Type:         schema.TypeString,
 							Optional:     true,
 							Default:      "tcp",
-							ValidateFunc: validateStringInWord([]string{"tcp", "udp"}),
+							ValidateFunc: validation.StringInSlice([]string{"tcp", "udp"}, false),
 						},
 						"number": {
 							Type:         schema.TypeInt,
 							Optional:     true,
 							Default:      "80",
-							ValidateFunc: validateIntegerInRange(1, 65535),
+							ValidateFunc: validation.IntBetween(1, 65535),
 						},
 					},
 				},
@@ -92,7 +93,7 @@ func resourceArukasContainer() *schema.Resource {
 			"cmd": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validateStrInRange(1, 4096),
+				ValidateFunc: validation.StringLenBetween(1, 4096),
 			},
 			"port_mappings": {
 				Type:     schema.TypeList,

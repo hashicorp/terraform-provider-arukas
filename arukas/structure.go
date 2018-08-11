@@ -1,8 +1,9 @@
 package arukas
 
 import (
-	"github.com/yamamoto-febc/go-arukas"
 	"net"
+
+	"github.com/yamamoto-febc/go-arukas"
 )
 
 // Takes the result of flatmap.Expand for an array of strings

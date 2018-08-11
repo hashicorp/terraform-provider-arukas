@@ -2,8 +2,9 @@ package arukas
 
 import (
 	"fmt"
-	"github.com/yamamoto-febc/go-arukas"
 	"time"
+
+	"github.com/yamamoto-febc/go-arukas"
 )
 
 const (

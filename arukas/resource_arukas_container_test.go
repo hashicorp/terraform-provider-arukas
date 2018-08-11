@@ -2,11 +2,12 @@ package arukas
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/acctest"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/yamamoto-febc/go-arukas"
-	"testing"
 )
 
 func TestAccArukasContainer_Basic(t *testing.T) {
