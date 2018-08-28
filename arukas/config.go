@@ -1,9 +1,10 @@
 package arukas
 
 import (
-	API "github.com/arukasio/cli"
-	"os"
+	"fmt"
 	"time"
+
+	"github.com/yamamoto-febc/go-arukas"
 )
 
 const (
@@ -12,6 +13,7 @@ const (
 	JSONUrlParamName     = "ARUKAS_JSON_API_URL"
 	JSONDebugParamName   = "ARUKAS_DEBUG"
 	JSONTimeoutParamName = "ARUKAS_TIMEOUT"
+	userAgentFormat      = "terraform-provider-arukas(go-arukas: v%s)"
 )
 
 type Config struct {
@@ -22,31 +24,31 @@ type Config struct {
 	Timeout int
 }
 
-func (c *Config) NewClient() (*ArukasClient, error) {
-
-	os.Setenv(JSONTokenParamName, c.Token)
-	os.Setenv(JSONSecretParamName, c.Secret)
-	os.Setenv(JSONUrlParamName, c.URL)
-	os.Setenv(JSONDebugParamName, c.Trace)
-
-	client, err := API.NewClient()
-	if err != nil {
-		return nil, err
-	}
-	client.UserAgent = "Terraform for Arukas"
+func (c *Config) NewClient() (*arukasClient, error) {
 
 	timeout := time.Duration(0)
 	if c.Timeout > 0 {
 		timeout = time.Duration(c.Timeout) * time.Second
 	}
 
-	return &ArukasClient{
+	client, err := arukas.NewClient(&arukas.ClientParam{
+		Token:      c.Token,
+		Secret:     c.Secret,
+		APIBaseURL: c.URL,
+		Trace:      c.Trace != "",
+		UserAgent:  fmt.Sprintf(userAgentFormat, arukas.Version),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &arukasClient{
 		Client:  client,
-		Timeout: timeout,
+		timeout: timeout,
 	}, nil
 }
 
-type ArukasClient struct {
-	*API.Client
-	Timeout time.Duration
+type arukasClient struct {
+	arukas.Client
+	timeout time.Duration
 }
