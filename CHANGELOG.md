@@ -1,4 +1,9 @@
-## 0.1.1 (Unreleased)
+## 1.0.0 (Unreleased)
+
+BACKWARDS INCOMPATIBILITIES / NOTES:
+
+* provider: Support Arukas GA version [GH-2]
+
 ## 0.1.0 (June 20, 2017)
 
 NOTES:
