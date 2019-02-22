@@ -2,6 +2,7 @@ package arukas
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -163,8 +164,7 @@ func resourceArukasContainerCreate(d *schema.ResourceData, meta interface{}) err
 		parsedPorts = expandPorts(rawPorts)
 	}
 
-	// create
-	app, err := client.CreateApp(&arukas.RequestParam{
+	id, err := createAndStartApp(client, &arukas.RequestParam{
 		Name:        name,
 		Plan:        plan,
 		Image:       image,
@@ -173,16 +173,28 @@ func resourceArukasContainerCreate(d *schema.ResourceData, meta interface{}) err
 		SubDomain:   subdomain,
 		Environment: parsedEnvs,
 		Ports:       parsedPorts,
-	})
+	}, 1, 30)
+	d.SetId(id)
 	if err != nil {
 		return err
 	}
 
-	d.SetId(app.AppID())
+	return resourceArukasContainerRead(d, meta)
+}
+
+func createAndStartApp(client *arukasClient, params *arukas.RequestParam, retry, maxRetries int) (string, error) {
+	// create app
+	app, err := client.CreateApp(params)
+	if err != nil {
+		return "", err
+	}
+
+	id := app.AppID()
+	log.Printf("[DEBUG] Created new app %q, starting container.", id)
 
 	// start container
 	if err := client.PowerOn(app.ServiceID()); err != nil {
-		return err
+		return id, err
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -190,20 +202,32 @@ func resourceArukasContainerCreate(d *schema.ResourceData, meta interface{}) err
 		Pending: []string{arukas.StatusStopping, arukas.StatusStopped, arukas.StatusBooting},
 		Timeout: client.timeout,
 		Refresh: func() (interface{}, string, error) {
-			service, err := client.ReadService(app.ServiceID())
+			serviceID := app.ServiceID()
+			service, err := client.ReadService(serviceID)
 			if err != nil {
 				return nil, "", err
 			}
+			status := service.Status()
 
-			return service, service.Status(), nil
+			log.Printf("[DEBUG] Service %q is %q", serviceID, status)
+
+			return service, status, nil
 		},
 	}
 	_, err = stateConf.WaitForState()
 	if err != nil {
-		return err
+		if usErr, ok := err.(*resource.UnexpectedStateError); ok && usErr.State == arukas.StatusTerminated && retry <= maxRetries {
+			log.Printf("[DEBUG] Recreating app %q as it failed to start (%d of %d attempts)", id, retry, maxRetries)
+			if err := client.DeleteApp(id); err != nil {
+				return id, nil
+			}
+			retry++
+			return createAndStartApp(client, params, retry, maxRetries)
+		}
+		return id, err
 	}
 
-	return resourceArukasContainerRead(d, meta)
+	return id, nil
 }
 
 func resourceArukasContainerRead(d *schema.ResourceData, meta interface{}) error {
