@@ -2,6 +2,7 @@ package arukas
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/acctest"
@@ -49,6 +50,12 @@ func TestAccArukasContainer_Basic(t *testing.T) {
 						"arukas_container.foobar", "environments.0.value", "value"),
 					resource.TestCheckResourceAttr(
 						"arukas_container.foobar", "port_mappings.#", "1"),
+					resource.TestMatchResourceAttr(
+						"arukas_container.foobar", "endpoint_full_hostname", regexp.MustCompile(`^[\w-]+?\.arukascloud\.io$`),
+					),
+					resource.TestMatchResourceAttr(
+						"arukas_container.foobar", "endpoint_full_url", regexp.MustCompile(`^https://[\w-]+?\.arukascloud\.io$`),
+					),
 				),
 			},
 		},

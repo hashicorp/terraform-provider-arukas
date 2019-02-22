@@ -245,8 +245,8 @@ func resourceArukasContainerRead(d *schema.ResourceData, meta interface{}) error
 		endpoint = strings.Replace(endpoint, ".arukascloud.io", "", -1)
 	}
 	d.Set("endpoint", endpoint)
-	d.Set("endpoint_full_hostname", endpoint)
-	d.Set("endpoint_full_url", fmt.Sprintf("https://%s", endpoint))
+	d.Set("endpoint_full_hostname", service.EndPoint())
+	d.Set("endpoint_full_url", fmt.Sprintf("https://%s", service.EndPoint()))
 
 	d.Set("service_id", app.ServiceID())
 	return nil
