@@ -1,4 +1,9 @@
 ## 1.0.1 (Unreleased)
+
+BUG FIXES:
+
+* resource/arukas_container: fixed wrong value setting of endpoint_full_xxx attributes [GH-4]
+
 ## 1.0.0 (September 04, 2018)
 
 BACKWARDS INCOMPATIBILITIES / NOTES:
