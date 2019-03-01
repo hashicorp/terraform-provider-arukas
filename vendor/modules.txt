@@ -6,7 +6,7 @@ github.com/apparentlymart/go-cidr/cidr
 github.com/apparentlymart/go-textseg/textseg
 # github.com/armon/go-radix v0.0.0-20170727155443-1fca145dffbc
 github.com/armon/go-radix
-# github.com/aws/aws-sdk-go v0.0.0-20180220235055-cab3b4f60d07
+# github.com/aws/aws-sdk-go v1.14.31
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
@@ -15,21 +15,26 @@ github.com/aws/aws-sdk-go/aws/session
 github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/endpoints
+github.com/aws/aws-sdk-go/internal/sdkio
 github.com/aws/aws-sdk-go/internal/shareddefaults
 github.com/aws/aws-sdk-go/aws/client
+github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/aws/client/metadata
-github.com/aws/aws-sdk-go/aws/request
 github.com/aws/aws-sdk-go/aws/corehandlers
+github.com/aws/aws-sdk-go/aws/request
 github.com/aws/aws-sdk-go/aws/credentials/stscreds
+github.com/aws/aws-sdk-go/aws/csm
 github.com/aws/aws-sdk-go/aws/defaults
 github.com/aws/aws-sdk-go/aws/awsutil
 github.com/aws/aws-sdk-go/aws/signer/v4
 github.com/aws/aws-sdk-go/private/protocol
+github.com/aws/aws-sdk-go/private/protocol/eventstream
+github.com/aws/aws-sdk-go/private/protocol/eventstream/eventstreamapi
+github.com/aws/aws-sdk-go/private/protocol/rest
 github.com/aws/aws-sdk-go/private/protocol/restxml
 github.com/aws/aws-sdk-go/internal/sdkrand
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
-github.com/aws/aws-sdk-go/private/protocol/rest
 github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
@@ -39,11 +44,11 @@ github.com/bgentry/go-netrc/netrc
 github.com/bgentry/speakeasy
 # github.com/blang/semver v0.0.0-20180213155857-a088618caaf3
 github.com/blang/semver
-# github.com/davecgh/go-spew v1.1.0
+# github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
-# github.com/go-ini/ini v0.0.0-20180214101753-32e4be5f41bb
+# github.com/go-ini/ini v1.25.4
 github.com/go-ini/ini
-# github.com/golang/protobuf v0.0.0-20180202184318-bbd03ef6da3a
+# github.com/golang/protobuf v1.2.0
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
@@ -53,9 +58,9 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/google/uuid
 # github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce
 github.com/hashicorp/errwrap
-# github.com/hashicorp/go-cleanhttp v0.0.0-20171218145408-d5fe4b57a186
+# github.com/hashicorp/go-cleanhttp v0.5.0
 github.com/hashicorp/go-cleanhttp
-# github.com/hashicorp/go-getter v0.0.0-20180214182104-da1332ad370d
+# github.com/hashicorp/go-getter v0.0.0-20180327010114-90bb99a48d86
 github.com/hashicorp/go-getter
 github.com/hashicorp/go-getter/helper/url
 # github.com/hashicorp/go-hclog v0.0.0-20180122232401-5bcb0f17e364
@@ -64,9 +69,11 @@ github.com/hashicorp/go-hclog
 github.com/hashicorp/go-multierror
 # github.com/hashicorp/go-plugin v0.0.0-20180216154416-baa83ead6ff9
 github.com/hashicorp/go-plugin
+# github.com/hashicorp/go-safetemp v0.0.0-20180326211150-b1a1dbde6fdc
+github.com/hashicorp/go-safetemp
 # github.com/hashicorp/go-uuid v1.0.1
 github.com/hashicorp/go-uuid
-# github.com/hashicorp/go-version v0.0.0-20171129150820-4fe82ae3040f
+# github.com/hashicorp/go-version v1.0.0
 github.com/hashicorp/go-version
 # github.com/hashicorp/hcl v0.0.0-20171017181929-23c074d0eceb
 github.com/hashicorp/hcl
@@ -78,7 +85,7 @@ github.com/hashicorp/hcl/hcl/scanner
 github.com/hashicorp/hcl/hcl/strconv
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/hashicorp/hcl2 v0.0.0-20180217232306-8c3aa9a6d490
+# github.com/hashicorp/hcl2 v0.0.0-20180308163058-5f8ed954abd8
 github.com/hashicorp/hcl2/gohcl
 github.com/hashicorp/hcl2/hcl
 github.com/hashicorp/hcl2/hclparse
@@ -92,7 +99,7 @@ github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v0.0.0-20150609070431-0dc08b1671f3
 github.com/hashicorp/logutils
-# github.com/hashicorp/terraform v0.11.7
+# github.com/hashicorp/terraform v0.11.12-beta1.0.20190227065421-fc531f54a878
 github.com/hashicorp/terraform/plugin
 github.com/hashicorp/terraform/helper/resource
 github.com/hashicorp/terraform/helper/schema
@@ -117,10 +124,10 @@ github.com/hashicorp/terraform/helper/acctest
 github.com/hashicorp/terraform/registry
 github.com/hashicorp/terraform/registry/regsrc
 github.com/hashicorp/terraform/registry/response
-github.com/hashicorp/terraform/svchost/auth
 github.com/hashicorp/terraform/svchost/disco
 github.com/hashicorp/terraform/config/hcl2shim
 github.com/hashicorp/terraform/svchost
+github.com/hashicorp/terraform/svchost/auth
 # github.com/hashicorp/yamux v0.0.0-20171219165022-683f49123a33
 github.com/hashicorp/yamux
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
@@ -191,7 +198,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/lex/httplex
 golang.org/x/net/internal/timeseries
-# golang.org/x/sys v0.0.0-20180202135801-37707fdb30a5
+# golang.org/x/sys v0.0.0-20181026203630-95b1ffbd15a5
 golang.org/x/sys/unix
 # golang.org/x/text v0.0.0-20180221121826-9e2b64d659da
 golang.org/x/text/unicode/norm
