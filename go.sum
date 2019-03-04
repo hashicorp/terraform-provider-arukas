@@ -264,8 +264,8 @@ github.com/xanzy/ssh-agent v0.2.0/go.mod h1:0NyE30eGUDliuLEHJgYte/zncp2zdTStcOnW
 github.com/xiang90/probing v0.0.0-20160813154853-07dd2e8dfe18/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xlab/treeprint v0.0.0-20161029104018-1d6e34225557 h1:Jpn2j6wHkC9wJv5iMfJhKqrZJx3TahFx+7sbZ7zQdxs=
 github.com/xlab/treeprint v0.0.0-20161029104018-1d6e34225557/go.mod h1:ce1O1j6UtZfjr22oyGxGLbauSBp2YVXpARAosm7dHBg=
-github.com/yamamoto-febc/go-arukas v0.0.8 h1:2ODyqSKl4MCWaCftVwvGTo/hV6OU8G+sI6vqCCoWjKk=
-github.com/yamamoto-febc/go-arukas v0.0.8/go.mod h1:jDgalLaoGEsU+HdUqj5B9kYCa+7aOmgS2GIEWb+Mn3I=
+github.com/yamamoto-febc/go-arukas v0.1.0 h1:IqHIITwT+5t3/uLPrqK+Yw9M+RVyTI98gTJ+Nt0cFlE=
+github.com/yamamoto-febc/go-arukas v0.1.0/go.mod h1:jDgalLaoGEsU+HdUqj5B9kYCa+7aOmgS2GIEWb+Mn3I=
 github.com/zclconf/go-cty v0.0.0-20180302160414-49fa5e03c418/go.mod h1:LnDKxj8gN4aatfXUqmUNooaDjvmDcLPbAN3hYBIVoJE=
 github.com/zclconf/go-cty v0.0.0-20180718220526-02bd58e97b57 h1:FWjfWQtNK83IJMe58FfMCSNkySe0PO9TvrQyLOKcPxw=
 github.com/zclconf/go-cty v0.0.0-20180718220526-02bd58e97b57/go.mod h1:LnDKxj8gN4aatfXUqmUNooaDjvmDcLPbAN3hYBIVoJE=
