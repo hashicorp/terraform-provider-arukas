@@ -21,7 +21,7 @@ require (
 	github.com/mitchellh/mapstructure v0.0.0-20180220230111-00c29f56e238 // indirect
 	github.com/posener/complete v0.0.0-20180119090745-cdc49b71388c // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190222223459-a17d461953aa // indirect
-	github.com/yamamoto-febc/go-arukas v0.0.8
+	github.com/yamamoto-febc/go-arukas v0.1.0
 	github.com/zclconf/go-cty v0.0.0-20180718220526-02bd58e97b57 // indirect
 	golang.org/x/crypto v0.0.0-20180219163459-432090b8f568 // indirect
 	golang.org/x/net v0.0.0-20180218175443-cbe0f9307d01 // indirect
