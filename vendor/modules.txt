@@ -162,7 +162,7 @@ github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/xlog
 github.com/ulikunitz/xz/lzma
 github.com/ulikunitz/xz/internal/hash
-# github.com/yamamoto-febc/go-arukas v0.0.8
+# github.com/yamamoto-febc/go-arukas v0.1.0
 github.com/yamamoto-febc/go-arukas
 # github.com/zclconf/go-cty v0.0.0-20180718220526-02bd58e97b57
 github.com/zclconf/go-cty/cty
