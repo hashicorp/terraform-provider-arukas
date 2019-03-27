@@ -258,12 +258,12 @@ resource "arukas_container" "foobar" {
   plan      = "free"
   endpoint  = "terraform-acc-test-endpoint-%s"
 
-  ports = {
+  ports {
     protocol = "tcp"
     number   = "80"
   }
 
-  environments = {
+  environments {
     key   = "key"
     value = "value"
   }
@@ -279,27 +279,23 @@ resource "arukas_container" "foobar" {
   plan      = "hobby"
   endpoint  = "terraform-acc-test-endpoint-update-%s"
 
-  ports = [
-    {
-      protocol = "tcp"
-      number   = "80"
-    },
-    {
-      protocol = "tcp"
-      number   = "443"
-    },
-  ]
+  ports {
+    protocol = "tcp"
+    number   = "80"
+  }
+  ports {
+    protocol = "tcp"
+    number   = "443"
+  }
 
-  environments = [
-    {
-      key   = "key"
-      value = "value"
-    },
-    {
-      key   = "key_upd"
-      value = "value_upd"
-    },
-  ]
+  environments {
+    key   = "key"
+    value = "value"
+  }
+  environments {
+    key   = "key_upd"
+    value = "value_upd"
+  }
 }`, randString, randString)
 }
 
@@ -308,7 +304,7 @@ func testAccCheckArukasContainerConfig_minimum(randString string) string {
 resource "arukas_container" "foobar" {
   name  = "terraform_acc_test_minimum_%s"
   image = "nginx:latest"
-  ports = {
+  ports {
     number = "80"
   }
 }`, randString)
