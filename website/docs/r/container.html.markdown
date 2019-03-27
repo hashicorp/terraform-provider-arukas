@@ -23,7 +23,7 @@ resource "arukas_container" "foobar" {
   instances = 1
   plan      = "free"
 
-  ports = {
+  ports {
     protocol = "tcp"
     number   = "80"
   }
