@@ -1,7 +1,13 @@
-## 1.0.1 (Unreleased)
+## 1.1.0 (Unreleased)
+
+IMPROVEMENTS:
+
+* Update to be terraform 0.12 compliant [GH-10]  
+The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions.
 
 BUG FIXES:
 
+* Upgrade go-arukas to v0.1.0 [GH-9]
 * resource/arukas_container: fixed wrong value setting of endpoint_full_xxx attributes [GH-4]
 
 ## 1.0.0 (September 04, 2018)
